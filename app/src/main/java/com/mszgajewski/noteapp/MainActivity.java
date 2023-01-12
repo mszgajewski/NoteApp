@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,20 +28,21 @@ public class MainActivity extends AppCompatActivity {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Sprawdzanie uzytkownika");
         progressDialog.setMessage("w toku");
-        progressDialog.show();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() == null){
+            progressDialog.show();
             firebaseAuth.signInAnonymously()
                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
-
+                            progressDialog.cancel();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-
+                            progressDialog.cancel();
+                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         }

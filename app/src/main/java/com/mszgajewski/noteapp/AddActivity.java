@@ -6,13 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mszgajewski.noteapp.databinding.ActivityAddBinding;
-import com.mszgajewski.noteapp.databinding.ActivityMainBinding;
 
 import java.util.UUID;
 
@@ -44,24 +44,27 @@ public class AddActivity extends AppCompatActivity {
         progressDialog.setMessage("notatki");
         progressDialog.show();
 
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
         String noteId = UUID.randomUUID().toString();
-        NotesModel notesModel = new NotesModel(noteId, title, description);
+        NotesModel notesModel = new NotesModel(noteId, title, description, firebaseAuth.getUid());
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore.collection("notes")
                 .document(noteId)
                 .set(notesModel)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-
+                        Toast.makeText(AddActivity.this, "Zapisano", Toast.LENGTH_SHORT).show();
+                        progressDialog.cancel();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
+                        Toast.makeText(AddActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        progressDialog.cancel();
                     }
                 });
     }

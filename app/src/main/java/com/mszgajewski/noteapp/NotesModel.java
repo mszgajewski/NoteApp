@@ -4,13 +4,24 @@ public class NotesModel {
     private String id;
     private String title;
     private String description;
+    private String uid;
 
-    public NotesModel(String id, String title, String description) {
+    public NotesModel(String id, String title, String description, String uid) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.uid = uid;
     }
+
     public NotesModel() {
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getId() {

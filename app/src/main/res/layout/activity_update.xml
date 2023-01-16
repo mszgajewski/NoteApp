@@ -4,43 +4,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@color/blackShade"
     android:padding="15dp"
-    android:orientation="vertical">
-
+    android:background="@color/blackShade"
+    tools:context=".UpdateActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:orientation="vertical" >
+
         <EditText
+            android:id="@+id/updateTitleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:hint="Tytuł"
+            android:background="@android:color/transparent" />
+
+        <EditText
+            android:id="@+id/updateDescEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:hint="Szukaj"
-            android:background="@android:color/transparent"
-            android:padding="15dp"/>
+            android:textColorHint="@color/greyShade"
+            android:hint="Opis"
+            android:layout_marginTop="5dp"
+            android:background="@android:color/transparent" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/notesRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/card_note" />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addBtn"
+        android:id="@+id/updateBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/ic_add"/>
-
+        android:src="@drawable/ic_save"/>
 
 </RelativeLayout>

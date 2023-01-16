@@ -33,6 +33,15 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.MyViewHolder
         notifyDataSetChanged();
     }
 
+    public List<NotesModel> getList(){
+        return notesModelList;
+    }
+
+    public void filterList(List<NotesModel> newList){
+        notesModelList = newList;
+        notifyDataSetChanged();
+    }
+
     @Override
     public void unregisterAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
         super.unregisterAdapterDataObserver(observer);

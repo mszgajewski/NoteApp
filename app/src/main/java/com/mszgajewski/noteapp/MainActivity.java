@@ -7,9 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -18,7 +19,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mszgajewski.noteapp.databinding.ActivityMainBinding;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,6 +44,38 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        binding.searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = s.toString();
+                if(text.length() > 0){
+                    filter(text);
+                }
+            }
+        });
+    }
+
+    private void filter(String text) {
+        List<NotesModel> adapterList = notesAdapter.getList();
+        List<NotesModel> notesModelList = new ArrayList<>();
+        for (int i = 0; i < adapterList.size(); i++) {
+            NotesModel notesModel = adapterList.get(i);
+            if (notesModel.getTitle().toLowerCase().contains(text.toLowerCase())|| notesModel.getDescription().toLowerCase().contains(text)) {
+                notesModelList.add(notesModel);
+            }
+        }
+        notesAdapter.filterList(notesModelList);
     }
 
     @Override

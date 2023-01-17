@@ -17,6 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mszgajewski.noteapp.databinding.ActivityMainBinding;
 import java.util.ArrayList;
@@ -26,13 +27,13 @@ public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
     private  NotesAdapter notesAdapter;
-
+    private  List<NotesModel> notesModelList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        notesModelList = new ArrayList<>();
         notesAdapter = new NotesAdapter(this);
         binding.notesRecycler.setAdapter(notesAdapter);
         binding.notesRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -61,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
                 String text = s.toString();
                 if(text.length() > 0){
                     filter(text);
+                } else {
+                    notesAdapter.clear();
+                    notesAdapter.filterList(notesModelList);
                 }
             }
         });
@@ -112,6 +116,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getData() {
+        /*
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);  */
         FirebaseFirestore.getInstance()
                 .collection("notes")
                 .whereEqualTo("uid", FirebaseAuth.getInstance().getUid())
@@ -124,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
                         for (int i=0; i<documentSnapshotList.size(); i++){
                             DocumentSnapshot documentSnapshot = documentSnapshotList.get(i);
                             NotesModel notesModel = documentSnapshot.toObject(NotesModel.class);
+                            notesModelList.add(notesModel);
                             notesAdapter.add(notesModel);
-
                         }
                     }
                 })

@@ -22,7 +22,6 @@ public class UpdateActivity extends AppCompatActivity {
 
     ActivityUpdateBinding binding;
     private String title, description,id;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +35,15 @@ public class UpdateActivity extends AppCompatActivity {
 
         binding.updateTitleEditText.setText(title);
         binding.updateDescEditText.setText(description);
+        binding.deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProgressDialog progressDialog = new ProgressDialog(v.getContext());
+                progressDialog.setTitle("Usuwanie");
+                FirebaseFirestore.getInstance().collection("notes").document(id).delete();
+                finish();
+            }
+        });
 
         binding.updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override

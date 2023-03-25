@@ -1,23 +1,15 @@
 package com.mszgajewski.noteapp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.Toast;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.mszgajewski.noteapp.databinding.ActivityMainBinding;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +29,18 @@ public class MainActivity extends AppCompatActivity {
         binding.notesRecycler.setAdapter(notesAdapter);
         binding.notesRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        binding.addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                startActivity(intent);
-            }
+        binding.addBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddActivity.class);
+            startActivity(intent);
         });
 
         binding.searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -85,25 +72,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Sprawdzanie uzytkownika");
-        progressDialog.setMessage("w toku");
+        DelayedProgressDialog progressDialog = new DelayedProgressDialog();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() == null){
-            progressDialog.show();
+            progressDialog.show(getSupportFragmentManager(), "Sprawdzanie uzytkownika w toku");
             firebaseAuth.signInAnonymously()
-                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                        @Override
-                        public void onSuccess(AuthResult authResult) {
-                            progressDialog.cancel();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.cancel();
-                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnSuccessListener(authResult -> progressDialog.cancel())
+                    .addOnFailureListener(e -> {
+                        progressDialog.cancel();
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         }
     }
@@ -115,33 +92,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        /*
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(true)
-                .build();
-        db.setFirestoreSettings(settings);  */
+
         FirebaseFirestore.getInstance()
                 .collection("notes")
                 .whereEqualTo("uid", FirebaseAuth.getInstance().getUid())
                 .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        notesAdapter.clear();
-                        List<DocumentSnapshot> documentSnapshotList = queryDocumentSnapshots.getDocuments();
-                        for (int i=0; i<documentSnapshotList.size(); i++){
-                            DocumentSnapshot documentSnapshot = documentSnapshotList.get(i);
-                            NotesModel notesModel = documentSnapshot.toObject(NotesModel.class);
-                            notesModelList.add(notesModel);
-                            notesAdapter.add(notesModel);
-                        }
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    notesAdapter.clear();
+                    List<DocumentSnapshot> documentSnapshotList = queryDocumentSnapshots.getDocuments();
+                    for (int i=0; i<documentSnapshotList.size(); i++){
+                        DocumentSnapshot documentSnapshot = documentSnapshotList.get(i);
+                        NotesModel notesModel = documentSnapshot.toObject(NotesModel.class);
+                        notesModelList.add(notesModel);
+                        notesAdapter.add(notesModel);
                     }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

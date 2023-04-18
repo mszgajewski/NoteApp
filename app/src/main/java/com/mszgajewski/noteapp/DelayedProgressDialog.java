@@ -17,7 +17,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.mszgajewski.noteapp.databinding.DialogProgressBinding;
 
-
 /*
  * Copyright 2018 Qi Li
  *

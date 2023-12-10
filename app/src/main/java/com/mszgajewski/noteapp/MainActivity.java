@@ -94,19 +94,19 @@ public class MainActivity extends AppCompatActivity {
     private void getData() {
 
         FirebaseFirestore.getInstance()
-                .collection("notes")
-                .whereEqualTo("uid", FirebaseAuth.getInstance().getUid())
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    notesAdapter.clear();
-                    List<DocumentSnapshot> documentSnapshotList = queryDocumentSnapshots.getDocuments();
-                    for (int i=0; i<documentSnapshotList.size(); i++){
-                        DocumentSnapshot documentSnapshot = documentSnapshotList.get(i);
-                        NotesModel notesModel = documentSnapshot.toObject(NotesModel.class);
-                        notesModelList.add(notesModel);
-                        notesAdapter.add(notesModel);
-                    }
-                })
-                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
+            .collection("notes")
+            .whereEqualTo("uid", FirebaseAuth.getInstance().getUid())
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                notesAdapter.clear();
+                List<DocumentSnapshot> documentSnapshotList = queryDocumentSnapshots.getDocuments();
+                for (int i=0; i<documentSnapshotList.size(); i++){
+                    DocumentSnapshot documentSnapshot = documentSnapshotList.get(i);
+                    NotesModel notesModel = documentSnapshot.toObject(NotesModel.class);
+                    notesModelList.add(notesModel);
+                    notesAdapter.add(notesModel);
+                }
+            })
+            .addOnFailureListener(e -> Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }
